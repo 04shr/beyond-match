@@ -764,3 +764,15 @@ select, input, textarea {
     grid-template-columns: 1fr;
   }
 }
+.auth-message {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.auth-message.success {
+  color: #2ecc71;
+}
+
+.auth-message.error {
+  color: #e74c3c;
+}

@@ -489,6 +489,7 @@ async function loadCandidateJobMatches() {
    AUTH STATE
 ========================================================= */
 let authMode = "login"; // login | signup
+let justSignedUp = false;
 
 /* =========================================================
    AUTH UI CONTROL
@@ -531,29 +532,25 @@ function updateAuthUI() {
   }
 }
 
-
 /* =========================================================
-   AUTH MESSAGE DISPLAY (THIS FIXES MISSING ERROR TEXT)
+   AUTH MESSAGE
 ========================================================= */
-function showAuthMessage(message, type = "error") {
-  const box = document.getElementById("authMessage");
-  if (!box) return;
-
-  box.innerText = message;
-  box.style.display = "block";
-  box.style.color = type === "error" ? "#ff6b6b" : "#4ade80";
+function showMessage(text, type = "error") {
+  const msg = document.getElementById("authMessage");
+  msg.innerText = text;
+  msg.className = `auth-message ${type}`;
+  msg.style.display = "block";
 }
 
 function clearAuthMessage() {
-  const box = document.getElementById("authMessage");
-  if (!box) return;
-
-  box.innerText = "";
-  box.style.display = "none";
+  const msg = document.getElementById("authMessage");
+  if (!msg) return;
+  msg.innerText = "";
+  msg.style.display = "none";
 }
 
 /* =========================================================
-   AUTH SUBMIT HANDLER (LOGIN + SIGNUP)
+   AUTH SUBMIT HANDLER
 ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
   const emailInput = document.querySelector('.auth-card input[type="email"]');
@@ -568,51 +565,59 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
-    // 🔒 BASIC VALIDATION (PREVENTS FIREBASE 400)
     if (!email || !password) {
-      showAuthMessage("Please enter email and password.");
+      showMessage("Please enter email and password.");
       return;
     }
 
     if (password.length < 6) {
-      showAuthMessage("Password must be at least 6 characters.");
+      showMessage("Password must be at least 6 characters.");
       return;
     }
 
     btn.disabled = true;
 
     try {
+      /* ================= SIGN UP ================= */
       if (authMode === "signup") {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-        await addDoc(collection(db, "users"), {
-          uid: cred.user.uid,
-          email,
-          createdAt: serverTimestamp()
-        });
+       await setDoc(doc(db, "users", cred.user.uid), {
+  email,
+  createdAt: serverTimestamp()
+});
 
-        showAuthMessage("Account created successfully 🎉", "success");
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-        showAuthMessage("Login successful. Redirecting…", "success");
+
+        showMessage("Account created successfully 🎉 Please login.", "success");
+
+        // 🔑 CRITICAL FIXES
+        justSignedUp = true;
+        authMode = "login";
+        updateAuthUI();
+
+        btn.disabled = false;
+        return;
       }
+
+      /* ================= LOGIN ================= */
+      await signInWithEmailAndPassword(auth, email, password);
+      showMessage("Login successful. Redirecting…", "success");
 
       setTimeout(() => {
         window.location.href = "dashboard.html";
       }, 800);
 
     } catch (error) {
-      // 🔍 REAL FIREBASE ERROR MESSAGES
       if (error.code === "auth/email-already-in-use") {
-        showAuthMessage("Email already registered. Please login.");
+        showMessage("Email already registered. Please login.");
       } else if (error.code === "auth/wrong-password") {
-        showAuthMessage("Incorrect password.");
+        showMessage("Incorrect password.");
       } else if (error.code === "auth/user-not-found") {
-        showAuthMessage("No account found. Please sign up.");
+        showMessage("No account found. Please sign up.");
       } else if (error.code === "auth/invalid-email") {
-        showAuthMessage("Invalid email format.");
+        showMessage("Invalid email format.");
       } else {
-        showAuthMessage("Authentication failed. Please try again.");
+        showMessage("Authentication failed. Please try again.");
       }
     } finally {
       btn.disabled = false;
@@ -621,12 +626,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================================
-   AUTO REDIRECT BASED ON AUTH STATE
+   AUTH STATE REDIRECT
 ========================================================= */
 onAuthStateChanged(auth, (user) => {
   const path = window.location.pathname;
 
   if (user && path.endsWith("index.html")) {
+    if (justSignedUp) return; // ⛔ stop auto redirect after signup
     window.location.href = "dashboard.html";
   }
 
@@ -636,10 +642,8 @@ onAuthStateChanged(auth, (user) => {
 });
 
 /* =========================================================
-   EXPOSE FUNCTIONS
+   EXPOSE
 ========================================================= */
 window.openAuth = openAuth;
 window.closeAuth = closeAuth;
 window.toggleAuth = toggleAuth;
-
-
