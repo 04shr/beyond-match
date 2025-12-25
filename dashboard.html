@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BeyondMatch Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2 class="brand">BeyondMatch</h2>
+
+       <nav class="menu">
+    <a href="upload-jd.html" class="menu-item">Job Descriptions</a>
+    <a href="upload-candidate.html" class="menu-item">Upload Candidate</a>
+    <a href="matches.html" class="menu-item">Candidate Matches</a>
+    <a href="jobmatches.html" class="menu-item">Job Matches</a>
+    <a href="settings.html" class="menu-item">Settings</a>
+</nav>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TITLE -->
+        <div class="page-title">
+            <h1>Smart Matching. Stronger Hiring.</h1>
+            <p>AI-powered staffing insights with Snowflake & Power BI.</p>
+        </div>
+
+        <!-- 4 CARD PANEL -->
+        <section class="stats-grid">
+  <div class="stat-card">
+    <p class="label">Fetched JDs</p>
+    <h2 id="kpi-jds">–</h2>
+  </div>
+
+  <div class="stat-card">
+    <p class="label">Candidates</p>
+    <h2 id="kpi-candidates">–</h2>
+  </div>
+
+  <div class="stat-card">
+    <p class="label">Matches Generated</p>
+    <h2 id="kpi-matches">–</h2>
+  </div>
+
+  <div class="stat-card">
+    <p class="label">Match Accuracy Avg</p>
+    <h2 id="kpi-accuracy">–</h2>
+  </div>
+</section>
+
+        <!-- 2-SECTION GRID -->
+        <section class="grid-2">
+
+            <div class="card large">
+                <h3>Power BI Dashboard</h3>
+                <iframe title="project Dashboard"
+        src="https://app.powerbi.com/view?r=eyJrIjoiNzU1OGMyODEtOWQxMi00Y2JkLWJlMmEtYjNjMWFiN2FhNzk0IiwidCI6IjU2ZDQxNGEyLWYwMjAtNDIyNi1hYjM0LTEzMWY2MTVkY2M0MyJ9"
+        width="600"
+        height="373.5"
+        frameborder="0"
+        allowfullscreen="true">
+</iframe>
+            </div>
+
+            <div class="card">
+                <h3>Top Matching Roles</h3>
+       <ul class="list" id="topRolesList"></ul>
+                </ul>
+            </div>
+
+        </section>
+
+     
+          
+
+    </main>
+<script type="module" src="script.js"></script>
+</body>
+</html>

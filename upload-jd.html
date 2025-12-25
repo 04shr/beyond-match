@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>JD</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <h2 class="brand">BeyondMatch</h2>
+      <nav class="menu">
+    <a href="dashboard.html" class="menu-item">Dashboard</a>
+    <a href="upload-candidate.html" class="menu-item">Upload Candidate</a>
+    <a href="matches.html" class="menu-item">Candidate Matches</a>
+    <a href="jobmatches.html" class="menu-item">Job Matches</a>
+    <a href="settings.html" class="menu-item">Settings</a>
+      </nav>
+    </aside>
+
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- PAGE TITLE -->
+    <div class="page-title">
+      <h1>Fetching Job Descriptions</h1>
+      <p> Job descriptions are automatically retrieved from the backend
+    and synced to the system.  No manual input required.</p>
+    </div>
+
+    <!-- AUTO JD INGEST PAGE -->
+<div class="card large" id="autoJDPage" style="margin-top:25px;">
+
+  <p id="jdStatus" style="margin-top:12px; opacity:0.7;">
+    Initializing JD sync…
+  </p>
+
+  <!-- 👇 JOBS WILL APPEAR HERE -->
+  <div class="jobs-grid" id="jobsGrid" style="margin-top:25px;"></div>
+
+</div>
+
+
+<div class="jobs-grid" id="jobsGrid"></div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+
+</body>
+</html>

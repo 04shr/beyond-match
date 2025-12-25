@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add Candidate – BeyondMatch</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+      <h2 class="brand">BeyondMatch</h2>
+      <nav class="menu">
+    <a href="dashboard.html" class="menu-item">Dashboard</a>
+    <a href="upload-jd.html" class="menu-item">Job Descriptions</a>
+    <a href="matches.html" class="menu-item">Candidate Matches</a>
+    <a href="jobmatches.html" class="menu-item">Job Matches</a>
+    <a href="settings.html" class="menu-item">Settings</a>
+      </nav>
+    </aside>
+
+
+<!-- MAIN -->
+<!-- MAIN -->
+<div class="main add-candidate-page">
+
+  <!-- TITLE -->
+  <div class="page-title">
+    <h1>Add Candidate</h1>
+    <p>Create a candidate profile and attach a resume for matching.</p>
+  </div>
+
+  <!-- SIDE BY SIDE LAYOUT -->
+  <div class="candidate-layout">
+
+    <!-- LEFT: UPLOAD FORM -->
+    <div class="card large candidate-card">
+
+      <form id="uploadCandidateForm" class="auth-style-form">
+
+        <!-- NAME -->
+        <div class="input-group">
+          <label>Full Name *</label>
+          <input
+            id="fullName"
+            type="text"
+            placeholder="John Doe"
+            required
+          />
+        </div>
+
+        <!-- EMAIL -->
+        <div class="input-group">
+          <label>Email *</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="john@example.com"
+            required
+          />
+        </div>
+
+        <!-- RESUME UPLOAD -->
+        <div class="input-group">
+          <label>Resume (PDF / DOCX)</label>
+
+          <div class="resume-upload-box">
+            <input
+              type="file"
+              id="resumeFile"
+              accept=".pdf,.doc,.docx"
+              required
+            />
+
+            <!-- hidden textarea (DO NOT REMOVE) -->
+            <textarea id="resumeText" style="display:none;"></textarea>
+
+            <p class="hint">Upload candidate resume</p>
+          </div>
+        </div>
+
+        <button class="btn full" type="submit">
+          Add Candidate
+        </button>
+
+      </form>
+    </div>
+
+    <!-- RIGHT: STATUS (WIDER) -->
+    <div class="card large status-card">
+      <h3>Status</h3>
+      <pre
+        id="uploadCandidateResult"
+        style="
+          margin-top:15px;
+          background:#1c2030;
+          padding:15px;
+          border-radius:10px;
+        "
+      >{}</pre>
+    </div>
+
+  </div>
+</div>
+
+
+<script type="module" src="script.js"></script>
+<script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+<script>
+document.getElementById("uploadCandidateForm").onsubmit = async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("fullName").value;
+  const email = document.getElementById("email").value;
+  const resumeText = document.getElementById("resumeText").value;
+
+  const result = await uploadCandidate(name, email, resumeText);
+
+  document.getElementById("uploadCandidateResult").textContent =
+    JSON.stringify(result, null, 2);
+};
+</script>
+<script>
+const resumeFileInput = document.getElementById("resumeFile");
+const resumeTextArea = document.getElementById("resumeText");
+
+resumeFileInput.addEventListener("change", async () => {
+  const file = resumeFileInput.files[0];
+  if (!file) return;
+
+  const ext = file.name.split(".").pop().toLowerCase();
+
+  resumeTextArea.value = "Parsing resume…";
+
+  try {
+    if (ext === "pdf") {
+      await parsePDF(file);
+    } else if (ext === "docx") {
+      await parseDOCX(file);
+    } else {
+      alert("Unsupported file type");
+      resumeTextArea.value = "";
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Failed to parse resume");
+    resumeTextArea.value = "";
+  }
+});
+
+async function parsePDF(file) {
+  const buffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+
+  let text = "";
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map(item => item.str).join(" ") + "\n";
+  }
+
+  resumeTextArea.value = text;
+}
+
+async function parseDOCX(file) {
+  const buffer = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer: buffer });
+  resumeTextArea.value = result.value;
+}
+</script>
+
+</body>
+</html>

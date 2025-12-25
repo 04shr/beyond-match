@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BeyondMatch</title>
+  <link rel="stylesheet" href="dash.css" />
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="landing-navbar">
+  <div class="brand">BeyondMatch</div>
+  <nav>
+    <button class="nav-btn" onclick="openAuth('login')">Login</button>
+    <button class="nav-btn outline" onclick="openAuth('signup')">Sign Up</button>
+  </nav>
+</header>
+
+<!-- LANDING HERO -->
+<section class="hero-wrapper">
+
+  <div class="hero-content">
+    <h1>Smart Matching.<br/>Stronger Hiring.</h1>
+
+    <p>
+      AI-powered candidate–job matching platform with Snowflake-backed
+      data processing and Power BI insights.
+    </p>
+  </div>
+
+<div class="hero-features">
+
+  <div class="feature-card">
+    <h3>Intelligent JD–Candidate Matching</h3>
+    <p>
+      Automatically matches candidates to multiple job descriptions using
+      skill relevance, experience alignment, and semantic similarity scoring.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Automated Resume Parsing</h3>
+    <p>
+      Extracts structured data from PDF and DOCX resumes, including skills,
+      experience, and qualifications, for accurate candidate profiling.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Job Description Intelligence</h3>
+    <p>
+      Ingests and analyzes job descriptions to identify required skills,
+      roles, experience levels, and hiring patterns.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Match Accuracy & Scoring</h3>
+    <p>
+      Provides transparent match scores to help recruiters quickly identify
+      the most relevant candidates for each role.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Snowflake-Powered Data Layer</h3>
+    <p>
+      Centralized data storage and processing using Snowflake for scalable
+      analytics and reliable data handling.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Power BI Analytics Dashboard</h3>
+    <p>
+      Interactive dashboards showing job trends, skill demand, match insights,
+      and recruiter-level analytics for informed hiring decisions.
+    </p>
+  </div>
+
+</div>
+
+
+</section>
+
+
+
+<!-- DARK OVERLAY -->
+<div class="auth-overlay" id="authOverlay" onclick="closeAuth()"></div>
+
+<!-- LOGIN / SIGNUP CARD -->
+<div class="auth-card" id="authCard">
+  <h2 id="authTitle">Login</h2>
+
+    <div class="auth-message" id="authMessage"></div>
+
+  <input type="email" placeholder="Email" />
+  <input type="password" placeholder="Password" />
+
+  <button class="auth-btn">Continue</button>
+
+  <p class="auth-switch">
+    <span id="authText">Don’t have an account?</span>
+    <a onclick="toggleAuth()">Sign Up</a>
+  </p>
+</div>
+
+<script type="module" src="script.js"></script>
+
+</body>
+</html>

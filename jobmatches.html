@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Candidate → Job Matches</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+     <aside class="sidebar">
+      <h2 class="brand">BeyondMatch</h2>
+      <nav class="menu">
+    <a href="dashboard.html" class="menu-item">Dashboard</a>
+    <a href="upload-jd.html" class="menu-item">Job Descriptions</a>
+    <a href="upload-candidate.html" class="menu-item">Upload Candidate</a>
+    <a href="matches.html" class="menu-item">Candidate Matches</a>
+    <a href="settings.html" class="menu-item">Settings</a>
+      </nav>
+    </aside>
+
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TITLE -->
+  <div class="page-title">
+    <h1>Job Matches by Candidate</h1>
+    <p>Select a candidate to view matching job opportunities.</p>
+  </div>
+
+  <!-- SELECT CARD -->
+ <div class="card large candidate-select-card">
+    <label>Select Candidate</label>
+<div class="candidate-actions">
+  <select id="candidateSelect" class="dropdown"></select>
+  <button class="btn" onclick="loadCandidateJobMatches()">View Matches</button>
+</div>
+
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card large" style="margin-top:25px;">
+    <h3>Matched Jobs</h3>
+   <div id="matchesGrid" class="matches-grid"></div>
+
+  </div>
+
+</div>
+<script type="module" src="script.js"></script>
+</body>
+</html>

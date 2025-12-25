@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings – BeyondMatch</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <h2 class="brand">BeyondMatch</h2>
+    <nav class="menu">
+        <a href="dashboard.html" class="menu-item">📊 Dashboard</a>
+        <a href="upload-jd.html" class="menu-item">📄 Job Descriptions</a>
+        <a href="upload-candidate.html" class="menu-item">👤 Upload Candidate</a>
+        <a href="matches.html" class="menu-item">🔍 Matches</a>
+        <a href="matches.html" class="menu-item">👤 Candidate Matches</a>
+</aside>
+
+<!-- MAIN -->
+
+<main class="main" id="settings-page">
+
+    <div class="settings-card">
+
+        <h1 class="settings-title">Settings</h1>
+
+        <!-- PROFILE -->
+        <div class="settings-section">
+            <h3>Profile Information</h3>
+            <p><span>Email</span><strong id="userEmail">—</strong></p>
+            <p><span>Account Created</span><strong id="createdAt">—</strong></p>
+        </div>
+
+        <!-- ACCOUNT -->
+        <div class="settings-section">
+            <h3>Account</h3>
+
+            <p><span>User ID</span></p>
+            <code id="userId"></code>
+
+            <div class="settings-actions">
+                <button class="btn" id="resetPasswordBtn">Reset Password</button>
+                <button class="btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- FIREBASE LOGIC -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut,
+    sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCbrwCaaQYEFCF1FJto_O3OYi68qTOqGQc",
+    authDomain: "beyondmatch-a714f.firebaseapp.com",
+    projectId: "beyondmatch-a714f",
+    storageBucket: "beyondmatch-a714f.firebasestorage.app",
+    messagingSenderId: "16758090560",
+    appId: "1:16758090560:web:89f207139970c97592a8a5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* 🔐 Protect page + load user data safely */
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "landing.html";
+        return;
+    }
+
+    // Basic auth data
+    const emailEl = document.getElementById("userEmail");
+    const userIdEl = document.getElementById("userId");
+    const createdAtEl = document.getElementById("createdAt");
+
+    if (emailEl) emailEl.innerText = user.email;
+    if (userIdEl) userIdEl.innerText = user.uid;
+
+    // Firestore user document
+    try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+
+        if (snap.exists()) {
+            const data = snap.data();
+
+            if (data.createdAt && createdAtEl) {
+                createdAtEl.innerText =
+                    data.createdAt.toDate().toLocaleString();
+            } else if (createdAtEl) {
+                createdAtEl.innerText = "Not available";
+            }
+        } else if (createdAtEl) {
+            createdAtEl.innerText = "Not available";
+        }
+    } catch (err) {
+        console.error("Error loading user data:", err);
+        if (createdAtEl) createdAtEl.innerText = "Error";
+    }
+});
+
+/* 🚪 Logout */
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+    logoutBtn.onclick = async () => {
+        await signOut(auth);
+        window.location.href = "dashboard.html";
+    };
+}
+
+/* 🔐 Reset password */
+const resetBtn = document.getElementById("resetPasswordBtn");
+if (resetBtn) {
+    resetBtn.onclick = async () => {
+        const email = document.getElementById("userEmail")?.innerText;
+        if (!email) return alert("Email not found");
+
+        await sendPasswordResetEmail(auth, email);
+        alert("Password reset email sent.");
+    };
+}
+</script>
+
+
+</body>
+</html>

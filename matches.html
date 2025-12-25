@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Matches</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <aside class="sidebar">
+      <h2 class="brand">BeyondMatch</h2>
+      <nav class="menu">
+    <a href="dashboard.html" class="menu-item">Dashboard</a>
+    <a href="upload-jd.html" class="menu-item">Job Descriptions</a>
+    <a href="upload-candidate.html" class="menu-item">Upload Candidate</a>
+    <a href="jobmatches.html" class="menu-item">Job Matches</a>
+    <a href="settings.html" class="menu-item">Settings</a>
+      </nav>
+    </aside>
+
+  <div class="main">
+
+    <div class="page-title">
+      <h1>Candidate Matches</h1>
+      <p>View ranked matches for any job posting.</p>
+    </div>
+
+<div class="card job-card select-candidate-card">
+
+  <label class="label">Select Job</label>
+
+  <select id="jobSelect" class="input">
+    <option value="">Loading jobs...</option>
+  </select>
+
+  <button id="loadMatchesBtn" class="btn full">
+    Load Matches
+  </button>
+</div>
+
+
+<div class="card matches-card">
+  <h3>Matches</h3>
+  <pre id="matchesList" style="display:none;"></pre>
+  <div id="matchesGrid" class="matches-grid"></div>
+</div>
+
+  </div>
+
+  <!-- ✅ MODULE LOAD -->
+  <script type="module" src="script.js"></script>
+</body>
+</html>
