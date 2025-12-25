@@ -485,17 +485,17 @@ async function loadCandidateJobMatches() {
   });
 }
 
-
-
+/* =========================================================
+   AUTH STATE
+========================================================= */
+let authMode = "login"; // login | signup
 
 /* =========================================================
-   AUTH MODAL STATE (UNCHANGED)
+   AUTH UI CONTROL
 ========================================================= */
-let authMode = "login";
-
 function openAuth(mode) {
   authMode = mode;
-  updateAuth();
+  updateAuthUI();
   clearAuthMessage();
   document.getElementById("authOverlay").style.display = "block";
   document.getElementById("authCard").style.display = "block";
@@ -508,39 +508,53 @@ function closeAuth() {
 
 function toggleAuth() {
   authMode = authMode === "login" ? "signup" : "login";
-  updateAuth();
+  updateAuthUI();
   clearAuthMessage();
 }
 
-function updateAuth() {
-  document.getElementById("authTitle").innerText =
-    authMode === "login" ? "Login" : "Sign Up";
+function updateAuthUI() {
+  const title = document.getElementById("authTitle");
+  const text = document.getElementById("authText");
+  const link = document.getElementById("authToggleLink");
+  const btn = document.querySelector(".auth-btn");
 
-  document.getElementById("authText").innerText =
-    authMode === "login"
-      ? "Don’t have an account?"
-      : "Already have an account?";
+  if (authMode === "login") {
+    title.innerText = "Login";
+    text.innerText = "Don’t have an account?";
+    link.innerText = "Sign Up";
+    btn.innerText = "Login";
+  } else {
+    title.innerText = "Sign Up";
+    text.innerText = "Already have an account?";
+    link.innerText = "Login";
+    btn.innerText = "Create Account";
+  }
 }
 
+
 /* =========================================================
-   AUTH UI HELPERS (UNCHANGED)
+   AUTH MESSAGE DISPLAY (THIS FIXES MISSING ERROR TEXT)
 ========================================================= */
-function showAuthMessage(message) {
+function showAuthMessage(message, type = "error") {
   const box = document.getElementById("authMessage");
   if (!box) return;
-  box.textContent = message;
+
+  box.innerText = message;
+  box.style.display = "block";
+  box.style.color = type === "error" ? "#ff6b6b" : "#4ade80";
 }
 
 function clearAuthMessage() {
   const box = document.getElementById("authMessage");
   if (!box) return;
-  box.textContent = "";
+
+  box.innerText = "";
+  box.style.display = "none";
 }
 
 /* =========================================================
-   AUTH HANDLER (UNCHANGED)
+   AUTH SUBMIT HANDLER (LOGIN + SIGNUP)
 ========================================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
   const emailInput = document.querySelector('.auth-card input[type="email"]');
   const passwordInput = document.querySelector('.auth-card input[type="password"]');
@@ -549,61 +563,83 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!btn) return;
 
   btn.onclick = async () => {
-    if (!emailInput.value || !passwordInput.value) {
+    clearAuthMessage();
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    // 🔒 BASIC VALIDATION (PREVENTS FIREBASE 400)
+    if (!email || !password) {
       showAuthMessage("Please enter email and password.");
       return;
     }
 
+    if (password.length < 6) {
+      showAuthMessage("Password must be at least 6 characters.");
+      return;
+    }
+
+    btn.disabled = true;
+
     try {
       if (authMode === "signup") {
-        const cred = await createUserWithEmailAndPassword(
-          auth,
-          emailInput.value,
-          passwordInput.value
-        );
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
 
         await addDoc(collection(db, "users"), {
           uid: cred.user.uid,
-          email: emailInput.value,
+          email,
           createdAt: serverTimestamp()
         });
+
+        showAuthMessage("Account created successfully 🎉", "success");
       } else {
-        await signInWithEmailAndPassword(
-          auth,
-          emailInput.value,
-          passwordInput.value
-        );
+        await signInWithEmailAndPassword(auth, email, password);
+        showAuthMessage("Login successful. Redirecting…", "success");
       }
 
-      window.location.href = "index.html";
-    } catch {
-      showAuthMessage("Invalid credentials. Please try again.");
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 800);
+
+    } catch (error) {
+      // 🔍 REAL FIREBASE ERROR MESSAGES
+      if (error.code === "auth/email-already-in-use") {
+        showAuthMessage("Email already registered. Please login.");
+      } else if (error.code === "auth/wrong-password") {
+        showAuthMessage("Incorrect password.");
+      } else if (error.code === "auth/user-not-found") {
+        showAuthMessage("No account found. Please sign up.");
+      } else if (error.code === "auth/invalid-email") {
+        showAuthMessage("Invalid email format.");
+      } else {
+        showAuthMessage("Authentication failed. Please try again.");
+      }
+    } finally {
+      btn.disabled = false;
     }
   };
 });
 
 /* =========================================================
-   AUTO REDIRECT IF LOGGED IN (UNCHANGED)
+   AUTO REDIRECT BASED ON AUTH STATE
 ========================================================= */
 onAuthStateChanged(auth, (user) => {
   const path = window.location.pathname;
 
-  // If logged in and on landing page → go to dashboard
   if (user && path.endsWith("index.html")) {
     window.location.href = "dashboard.html";
   }
 
-  // If NOT logged in and trying to access dashboard → go to landing
   if (!user && path.endsWith("dashboard.html")) {
     window.location.href = "index.html";
   }
 });
 
 /* =========================================================
-   EXPOSE AUTH FUNCTIONS (UNCHANGED)
+   EXPOSE FUNCTIONS
 ========================================================= */
 window.openAuth = openAuth;
 window.closeAuth = closeAuth;
 window.toggleAuth = toggleAuth;
-window.loadCandidateJobMatches = loadCandidateJobMatches;
+
 
