@@ -485,6 +485,9 @@ async function loadCandidateJobMatches() {
   });
 }
 
+window.loadCandidateJobMatches = loadCandidateJobMatches;
+
+
 /* =========================================================
    AUTH STATE
 ========================================================= */
