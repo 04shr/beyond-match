@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LocateHire</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- MarkerCluster CSS -->
+  <link rel="stylesheet" href="libs/MarkerCluster.css">
+  <link rel="stylesheet" href="libs/MarkerCluster.Default.css">
+
+  <!-- YOUR CSS FILE -->
+  <link rel="stylesheet" href="locatehire.css">
+
+  <!-- Leaflet JS -->
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- MarkerCluster JS -->
+  <script src="libs/leaflet.markercluster.js"></script>
+
+  <!-- App scripts -->
+  <script type="module" src="auth.js"></script>
+  <script type="module" src="api.js"></script>
+  <script type="module" src="candidate.js"></script>
+  
+  <!-- ADD THIS LINE -->
+  <script type="module" src="locatehire.js"></script>
+</head>
+
+<body>
+  <div class="page-title">
+    <h1>📍 LocateHire</h1>
+    <p>Explore jobs visually based on location</p>
+  </div>
+
+  <div class="main">
+    <div id="map"></div>
+
+    <div id="cityPanel" class="city-panel">
+  <div class="panel-header">
+    <h3 id="panelTitle">View Jobs</h3>
+        <button onclick="closeCityPanel()">✖</button>
+      </div>
+
+      <div id="panelGrid" class="panel-grid placeholder">
+        <p class="panel-empty">
+          Select a location marker on the map<br>
+          to view available jobs.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

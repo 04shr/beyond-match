@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Saved Jobs</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<aside class="sidebar">
+  <h2 class="brand">BeyondMatch</h2>
+  <nav class="menu">
+    <a href="candidate-dashboard.html" class="menu-item">Dashboard</a>
+    <a href="jobmatches.html" class="menu-item">Job Matches</a>
+     <a href="upload-jd.html" class="menu-item">Job Descriptions</a>
+    <a href="locatehire.html" class="menu-item">LocateHire</a>
+    <a href="settings.html" class="menu-item">Settings</a>
+    <button class="menu-item logout-btn" onclick="unifiedLogout()">
+  ⏻ Logout
+</button>
+  </nav>
+</aside>
+
+<div class="main">
+  <div class="page-title">
+    <h1>Saved Jobs</h1>
+    <p>Jobs you bookmarked for later</p>
+  </div>
+
+  <div id="savedJobsGrid" class="matches-grid"></div>
+</div>
+
+<script type="module" src="auth.js"></script>
+<script type="module" src="savedjobs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recruiter Job Matches – BeyondMatch</title>
+
+  <!-- Standalone recruiter styles -->
+  <link rel="stylesheet" href="recruiter-matches.css" />
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+  <h2 class="brand">BeyondMatch</h2>
+
+  <nav class="menu">
+    <a href="rec-dash.html" class="menu-item active">
+  Job Matches
+</a>
+
+    <a href="settings.html" class="menu-item">Settings</a>
+    <button class="menu-item logout-btn" onclick="unifiedLogout()">
+  ⏻ Logout
+</button>
+  </nav>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<main class="main recruiter-matches-layout">
+
+  <!-- ===== PAGE TITLE (OUTSIDE CARDS) ===== -->
+  <div class="page-title">
+    <h1>Candidate Matches by Jobs</h1>
+    <p>Select a job to view matching candidate profiles.</p>
+  </div>
+
+  <!-- ===== MIDDLE: POWER BI ===== -->
+  <section class="card powerbi-section">
+    <h3>Job & Candidate Insights</h3>
+
+    <iframe
+      src="https://app.powerbi.com/view?r=eyJrIjoiMDdmOTU0ZmEtMzQ4NS00YzIyLWJjNjMtYzc0NWNkOGE5NjYxIiwidCI6IjljMTg1NzE0LWYwYWYtNDgyNi1iZDRiLTdiOTg3ZjZkZDkyMSJ9"
+      allowfullscreen>
+    </iframe>
+  </section>
+
+  <!-- ===== RIGHT: CONTROLS + MATCHES ===== -->
+  <section class="right-panel">
+
+    <!-- SELECT JOB -->
+
+<div class="card">
+  <label class="label">Select a job</label>
+
+  <!-- Custom Dropdown -->
+  <div class="custom-select-wrapper">
+    <div class="custom-select" id="customJobSelect"  style="margin-top: 10px;">
+      <div class="custom-select-trigger">
+        <span>View jobs</span>
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1.5L6 6.5L11 1.5" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="custom-options" id="customJobOptions">
+        <!-- Options will be populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <button id="loadMatchesBtn" class="btn full">
+    Load Matches
+  </button>
+</div>
+
+    <!-- MATCHES -->
+    <div class="card matches-card">
+      <h3>Matched Candidates</h3>
+
+      <!-- JS injects match cards here -->
+      <div id="matchesGrid" class="matches-grid"></div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ================= SCRIPT ================= -->
+<script type="module" src="auth.js"></script>
+<script type="module" src="api.js"></script>
+
+</body>
+</html>

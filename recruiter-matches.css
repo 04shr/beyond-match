@@ -1,0 +1,570 @@
+/* =================================
+   RESET & BASE
+================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: "Inter", sans-serif;
+  background: radial-gradient(circle at top, #0b1220, #05070c);
+  color: #e5e7eb;
+}
+
+body {
+  display: flex;
+}
+
+/* =================================
+   SIDEBAR
+================================= */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, #0a1020, #070a14);
+  border-right: 1px solid #111827;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  font-size: 22px;
+  font-weight: 700;
+  color: #60a5fa;
+  margin-bottom: 32px;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-item {
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #c7d2fe;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+}
+
+.menu-item.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+}
+
+/* =================================
+   MAIN LAYOUT
+================================= */
+.main {
+  flex: 1;
+  padding: 28px;
+  overflow: hidden;
+}
+
+.recruiter-matches-layout {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 24px;
+  height: 100%;
+}
+
+.page-title {
+  grid-column: 1 / -1;
+}
+
+/* =================================
+   CARDS (GLOBAL)
+================================= */
+.card {
+  background: #0b1220;        /* solid, darker than page bg */
+  border-radius: 14px;
+  padding: 16px;
+}
+
+/* =================================
+   POWER BI
+================================= */
+.powerbi-section{
+  height: 500px;
+}
+.powerbi-section h3 {
+  margin: 20px ;
+  font-size: 20px;
+  font-weight: 600;
+  color: #93c5fd;
+}
+
+.powerbi-section iframe {
+  margin-top: 20px;
+  width: 100%;
+  height: 350px;
+  border: none;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+/* =================================
+   RIGHT PANEL
+================================= */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 500px;
+  border: none;
+  border-radius: 12px;
+}
+
+/* =================================
+   FORM ELEMENTS
+================================= */
+.label {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #e5e7eb;
+  margin-bottom: 14px;
+}
+
+.input:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+/* =================================
+   BUTTONS
+================================= */
+.btn {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.35);
+}
+
+.btn.full {
+  width: 100%;
+}
+
+/* =================================
+   MATCHES GRID
+================================= */
+
+.matches-card {
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;   /* ⬅ critical */
+}
+
+
+.matches-card h3 {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #93c5fd;
+}
+
+.matches-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  flex: 1;                /* ⬅ takes remaining height */
+  overflow-y: auto;
+
+  padding-right: 6px;
+}
+
+
+.matches-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.matches-grid::-webkit-scrollbar-thumb {
+  background: #1e40af;
+  border-radius: 6px;
+}
+
+/* =================================
+   MATCH CARD
+================================= */
+.match-card {
+  background: linear-gradient(180deg, #0f172a, #020617);
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 16px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.match-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* Header */
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.match-name {
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.match-email {
+  font-size: 13px;
+  color: #c7d2fe;
+}
+
+/* Score pill */
+.match-score {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #022c22;
+}
+
+/* =================================
+   MATCH DETAILS
+================================= */
+.match-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.match-section strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #e5e7eb;
+}
+
+/* Score grid */
+.score-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  font-size: 13px;
+}
+
+.score-grid span:nth-child(odd) {
+  color: #9ca3af;
+}
+
+.score-grid span:nth-child(even) {
+  color: #f9fafb;
+  font-weight: 500;
+}
+
+/* =================================
+   EXPLANATIONS (NO BULLETS)
+================================= */
+.explanation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.explanation-list li {
+  font-size: 13px;
+  color: #e5e7eb;
+  margin-bottom: 4px;
+}
+
+/* ===============================
+   JOB SELECT — MODERN DROPDOWN
+================================ */
+
+/* Base select styling */
+.job-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-color: #0a0f1e;
+  border: 1px solid #1e293b;
+  color: #e5e7eb;
+
+  padding: 12px 40px 12px 14px;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  /* Custom dropdown arrow */
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2393c5fd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: calc(100% - 14px) center;
+  background-size: 12px 8px;
+  background-repeat: no-repeat;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  
+}
+
+/* Hover state */
+.job-select:hover {
+  border-color: #334155;
+  background-color: #0f172a;
+}
+
+/* Focus state */
+.job-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Dropdown options */
+.job-select option {
+  background: #0a0f1e;
+  color: #e5e7eb;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Selected option highlight */
+.job-select option:checked {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Hover on options (limited browser support) */
+.job-select option:hover {
+  background: #1e293b;
+}
+
+/* ===============================
+   CUSTOM DROPDOWN - MODERN UI
+================================ */
+
+.custom-select-wrapper {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.custom-select {
+  position: relative;
+  width: 100%;
+  user-select: none;
+}
+
+/* Trigger Button */
+.custom-select-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #0a0f1e;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.custom-select-trigger:hover {
+  border-color: #334155;
+  background: #0f172a;
+}
+
+.custom-select.open .custom-select-trigger {
+  border-color: #3b82f6;
+  background: #0f172a;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.custom-select-trigger span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-select-trigger svg {
+  flex-shrink: 0;
+  margin-left: 10px;
+  transition: transform 0.2s ease;
+}
+
+.custom-select.open .custom-select-trigger svg {
+  transform: rotate(180deg);
+}
+
+/* Options Container */
+.custom-options {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #0a0f1e;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.custom-select.open .custom-options {
+  max-height: 400px;
+  opacity: 1;
+  overflow-y: auto;
+}
+
+/* Scrollbar for options */
+.custom-options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-options::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-options::-webkit-scrollbar-thumb {
+  background: rgba(147, 197, 253, 0.3);
+  border-radius: 6px;
+}
+
+.custom-options::-webkit-scrollbar-thumb:hover {
+  background: rgba(147, 197, 253, 0.5);
+}
+
+/* Individual Option */
+.custom-option {
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  color: #e5e7eb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.custom-option:last-child {
+  border-bottom: none;
+}
+
+.custom-option:hover {
+  background: #1e293b;
+  color: #93c5fd;
+}
+
+.custom-option.selected {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.custom-option.selected:hover {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+
+/* 🔴 Unified Logout – Sidebar aligned */
+.logout-btn {
+  width: 100%;
+  text-align: left;
+
+  padding: 3px 10px;        /* match other menu items */
+
+  background: transparent;
+  border: none;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  color: #f87171;            /* red logout */
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logout-btn:hover {
+  background: rgba(248, 113, 113, 0.1);
+  color: #ef4444;
+  border-radius: 8px;
+
+}
+
+.no-matches {
+  text-align: center;
+  padding: 24px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.main {
+  overflow: hidden;
+}
+
+.right-panel {
+  overflow: hidden;
+}
+
+.job-insights-card,
+.matched-candidates-card {
+  background: #0f1428;              /* solid bg */
+  border-radius: 16px;
+  padding: 14px;
+  max-height: 520px;                /* ⬅ prevents overflow */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.matched-candidates-list {
+  overflow-y: auto;
+  padding-right: 6px;
+  flex: 1;
+}
+
+
