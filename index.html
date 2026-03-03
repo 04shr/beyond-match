@@ -155,174 +155,52 @@
   </div>
 </section>
 
-<!-- TECH STACK SECTION -->
-<section class="section-wrapper tech-section">
-  <div class="section-header">
-    <h2>Technology & Integrations</h2>
-    <p>Built on enterprise-grade infrastructure and APIs</p>
+<!-- BUILT FOR SECTION -->
+<section class="bm-built-section">
+
+  <div class="bm-built-header">
+    <h2>Built for <span>Candidates</span> & <span>Recruiters</span></h2>
+    <p>
+      Whether you're searching for the perfect opportunity or the ideal candidate,
+      BeyondMatch helps you move faster with confidence.
+    </p>
   </div>
 
-  <div class="tech-grid">
-    <div class="tech-category">
-      <h3 class="tech-category-title">Processing & AI</h3>
-      <div class="tech-items">
-        <div class="tech-item">
-          <div class="tech-icon">🐍</div>
-          <span>Python ETL</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">🤖</div>
-          <span>AI Embeddings</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">ML</div>
-          <span>Similarity Models</span>
-        </div>
+  <div class="bm-built-grid">
+
+    <!-- CANDIDATES CARD -->
+    <div class="bm-built-card">
+      <div class="bm-card-top">
+        <div class="bm-avatar">👤</div>
+        <h3>Candidates</h3>
       </div>
+
+      <ul class="bm-feature-list">
+        <li>AI-powered job recommendations</li>
+        <li>Location & salary-based filters</li>
+        <li>Track and apply seamlessly</li>
+      </ul>
+
+      <button class="bm-card-btn" onclick="openAuth('signup')">Find a Job</button>
     </div>
 
-    <div class="tech-category">
-      <h3 class="tech-category-title">Data</h3>
-      <div class="tech-items">
-        <div class="tech-item">
-          <div class="tech-icon">❄️</div>
-          <span>Snowflake & DynamoDB</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">SQL</div>
-          <span>SQL Queries</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">📊</div>
-          <span>Adzuna API</span>
-        </div>
+    <!-- RECRUITERS CARD -->
+    <div class="bm-built-card recruiter">
+      <div class="bm-card-top">
+        <div class="bm-avatar recruiter-avatar">🏢</div>
+        <h3>Recruiters</h3>
       </div>
+
+      <ul class="bm-feature-list">
+        <li>High-quality candidate matches</li>
+        <li>Real-time hiring insights</li>
+        <li>Streamlined recruitment workflow</li>
+      </ul>
+
+      <button class="bm-card-btn" onclick="openAuth('signup')">Find Talent</button>
     </div>
 
-    <div class="tech-category">
-      <h3 class="tech-category-title">Cloud Infrastructure</h3>
-      <div class="tech-items">
-        <div class="tech-item">
-          <div class="tech-icon">λ</div>
-          <span>AWS Lambda</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">🔌</div>
-          <span>API Gateway</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">🔐</div>
-          <span>IAM & SSM</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="tech-category">
-      <h3 class="tech-category-title">Analytics & Visualization</h3>
-      <div class="tech-items">
-        <div class="tech-item">
-          <div class="tech-icon">📈</div>
-          <span>Power BI</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">📉</div>
-          <span>Interactive Dashboards</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">🎯</div>
-          <span>Trend Analysis</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="tech-category">
-      <h3 class="tech-category-title">Development</h3>
-      <div class="tech-items">
-        <div class="tech-item">
-          <div class="tech-icon">Git</div>
-          <span>Version Control</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">🐙</div>
-          <span>GitHub</span>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">API</div>
-          <span>REST APIs</span>
-        </div>
-      </div>
-    </div>
   </div>
-</section>
-
-<!-- HOW IT WORKS SECTION -->
-<section class="section-wrapper how-section">
-  <div class="section-header">
-    <h2>System Architecture</h2>
-    <p>From data ingestion to intelligent hiring decisions</p>
-  </div>
-
-  <div class="how-flow">
-    <div class="flow-step">
-      <div class="step-number">01</div>
-      <div class="step-content">
-        <h3>Data Collection</h3>
-        <p>
-          Automated job data collection from multiple external platforms (JSearch, Adzuna, Jooble) 
-          using programmatic API integrations and scheduled Python ETL pipelines.
-        </p>
-      </div>
-      <div class="step-arrow">→</div>
-    </div>
-
-    <div class="flow-step">
-      <div class="step-number">02</div>
-      <div class="step-content">
-        <h3>Data Ingestion & Cleaning</h3>
-        <p>
-          Raw data is cleaned, normalized, and deduplicated through Python transformations. 
-          Validated records are stored in Snowflake staging tables for structured processing.
-        </p>
-      </div>
-      <div class="step-arrow">→</div>
-    </div>
-
-    <div class="flow-step">
-      <div class="step-number">03</div>
-      <div class="step-content">
-        <h3>AI-Powered Analysis</h3>
-        <p>
-          AI components generate embeddings for job descriptions and candidate profiles. 
-          Semantic similarity algorithms compute match scores based on skills, experience, and role fit.
-        </p>
-      </div>
-      <div class="step-arrow">→</div>
-    </div>
-
-    <div class="flow-step">
-      <div class="step-number">04</div>
-      <div class="step-content">
-        <h3>Analytics Layer</h3>
-        <p>
-          Match scores and structured data flow into Snowflake BI-ready datasets. 
-          Aggregations, trends, and metrics are prepared for real-time dashboard consumption.
-        </p>
-      </div>
-      <div class="step-arrow">→</div>
-    </div>
-
-    <div class="flow-step">
-      <div class="step-number">05</div>
-      <div class="step-content">
-        <h3>Insights & Decision-Making</h3>
-        <p>
-          Recruiters access match results, analytics, and trends through Power BI dashboards and backend APIs. 
-          Continuous, data-driven hiring decisions across the entire recruitment lifecycle.
-        </p>
-      </div>
-    </div>
-  </div>
-
 
 </section>
 
@@ -341,6 +219,7 @@
     <option value="recruiter">Recruiter</option>
     <option value="admin">Administrator</option>
   </select>
+  <input type="text" id="orgNameInput" placeholder="Organisation Name" style="display:none;" />
   <button class="auth-btn">Continue</button>
   <p class="auth-switch">
     <span id="authText">Don't have an account?</span>

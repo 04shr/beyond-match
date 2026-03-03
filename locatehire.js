@@ -1,4 +1,4 @@
-// FILE: locatehire.js — FULLY UPDATED & WORKING (DROP-IN REPLACEMENT)
+
 const apiFetch = window.apiFetch;
 
 let map;

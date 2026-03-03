@@ -567,4 +567,704 @@ body {
   flex: 1;
 }
 
+/* =================================
+   JOB FILTER BAR
+================================= */
 
+.jobs-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.input.small {
+  max-width: 180px;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 8px;
+}
+
+.toggle.secondary {
+  background: #1e293b;
+}
+
+.toggle.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+/* =================================
+   JOB TABLE SCROLL CONTAINER
+================================= */
+
+.jobs-table-card {
+  height: calc(100vh - 260px);   /* prevents overflow */
+  display: flex;
+  flex-direction: column;
+}
+
+.jobs-table-scroll {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* scrollbar styling */
+.jobs-table-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.jobs-table-scroll::-webkit-scrollbar-thumb {
+  background: #1e40af;
+  border-radius: 6px;
+}
+/* ===== Candidate Grid Layout ===== */
+
+.cand-container {
+  height: calc(100vh - 260px); /* adjust based on header height */
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.cand-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;   /* more space between cards */
+}
+
+.cand-card {
+  background: linear-gradient(145deg, #0e1a2f, #0b1424);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.05);
+  height: fit-content;
+}
+
+.cand-card:hover {
+  transform: translateY(-4px);
+  border-color: #3b82f6;
+}
+
+/* ================= ACTION PAGE ================= */
+
+.profile-card {
+  background: #0f172a;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.status-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.status-pill {
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.status-pill.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+/* ============================= */
+/* FULL WIDTH POWER BI DASHBOARD */
+/* ============================= */
+
+.full-width-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.powerbi-full {
+  flex: 1;
+  margin-top: 20px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.powerbi-full iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+}
+
+/* ============================= */
+/* MODERN JOBS PAGE */
+/* ============================= */
+/* ============================= */
+/* FIX GRID OVERFLOW */
+/* ============================= */
+
+.jobs-modern {
+  padding: 40px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;   /* Prevent horizontal scroll */
+}
+
+.jobs-grid-wrapper {
+  margin-top: 30px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden; /* 🔥 stop horizontal overflow */
+  padding-right: 8px; /* space for scrollbar */
+}
+
+/* Better grid sizing */
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.page-header-modern h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.page-header-modern p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* FILTER BAR */
+.jobs-filter-modern {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.toggle-modern {
+  display: flex;
+  gap: 10px;
+}
+
+.toggle-pill {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  background: #1e293b;
+  color: #cbd5e1;
+  transition: 0.2s ease;
+}
+
+.toggle-pill.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+}
+
+.toggle-pill.secondary {
+  background: #111827;
+}
+
+.modern-select {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: #e5e7eb;
+  min-width: 160px;
+}
+
+.modern-search {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: #e5e7eb;
+  min-width: 220px;
+}
+
+/* GRID */
+.jobs-grid-wrapper {
+  margin-top: 30px;
+  overflow-y: auto;
+  height: calc(100vh - 280px);
+}
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.job-modern-card {
+  background: linear-gradient(145deg, #0e1a2f, #0b1424);
+  border-radius: 16px;
+  padding: 22px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: 0.25s ease;
+}
+
+.job-modern-card:hover {
+  transform: translateY(-6px);
+  border-color: #2563eb;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.job-modern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.job-modern-header h3 {
+  font-size: 16px;
+  color: white;
+}
+
+.job-pill {
+  background: rgba(37,99,235,0.15);
+  color: #93c5fd;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.job-modern-company {
+  margin-top: 10px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.job-modern-actions {
+  margin-top: 18px;
+}
+
+.modern-view-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.modern-view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(37,99,235,0.35);
+}
+
+/* ============================= */
+/* MODERN DARK SCROLLBAR */
+/* ============================= */
+
+/* For WebKit browsers */
+.jobs-grid-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.jobs-grid-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.jobs-grid-wrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1e40af, #2563eb);
+  border-radius: 8px;
+  border: 2px solid #0b1220;
+}
+
+.jobs-grid-wrapper::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+}
+
+/* Firefox */
+.jobs-grid-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb transparent;
+}
+.jobs-grid-wrapper::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(to left, #05070c, transparent);
+  pointer-events: none;
+}
+
+/* ============================= */
+/* CANDIDATE MATCH CARD REFINED */
+/* ============================= */
+
+.cand-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+}
+
+.cand-top-row {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.cand-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.cand-company {
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.cand-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cand-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(59,130,246,0.15);
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.cand-tag.subtle {
+  background: rgba(255,255,255,0.05);
+  color: #cbd5e1;
+}
+
+.cand-location {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.cand-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ============================= */
+/* CANDIDATE PAGE SPACING FIX */
+/* ============================= */
+
+.main {
+  padding: 40px 50px;   /* more breathing room */
+}
+
+.page-title {
+  margin-bottom: 30px;  /* push grid down */
+}
+
+.jobs-filter-bar {
+  margin-bottom: 35px;  /* space below filters */
+}
+
+.jobs-table-card {
+  padding: 30px;        /* inner padding so cards don’t stick */
+  border-radius: 18px;
+}
+
+.cand-container {
+  padding: 10px 10px 20px 10px;  /* prevents overflow */
+}
+
+/* ============================= */
+/* CANDIDATE CARD PROFESSIONAL */
+/* ============================= */
+
+.cand-card {
+  background: linear-gradient(145deg, #0e1a2f, #0b1424);
+  border-radius: 18px;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: 0.25s ease;
+}
+
+.cand-card:hover {
+  transform: translateY(-6px);
+  border-color: #2563eb;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+}
+
+.cand-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.cand-email {
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.cand-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.skill-pill {
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(59,130,246,0.15);
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.skill-pill.subtle {
+  background: rgba(255,255,255,0.05);
+  color: #94a3b8;
+}
+
+.cand-score {
+  margin-top: 6px;
+}
+
+.match-pill {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  font-weight: 600;
+}
+
+.cand-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ============================= */
+/* DARK MODERN SCROLLBAR */
+/* ============================= */
+
+/* Target the scrollable card container */
+.jobs-table-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.jobs-table-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.jobs-table-card::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1e40af, #2563eb);
+  border-radius: 8px;
+  border: 2px solid #0b1220;
+}
+
+.jobs-table-card::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+}
+
+/* Firefox */
+.jobs-table-card {
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb transparent;
+}
+/* ============================= */
+/* FIX VIEW BUTTON STYLE */
+/* ============================= */
+
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 16px;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff !important;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-decoration: none !important;
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.view-btn:visited {
+  color: #ffffff !important;
+}
+
+/* ============================= */
+/* RECRUITER ACTIONS GRID */
+/* ============================= */
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  margin-top: 30px;
+}
+
+/* Action Card Layout */
+.action-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 22px;
+  border-radius: 18px;
+}
+
+/* Header */
+.action-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Status Pill */
+.action-status {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Status Colors */
+.action-status.contacted {
+  background: rgba(59,130,246,0.2);
+  color: #93c5fd;
+}
+
+.action-status.interview_scheduled {
+  background: rgba(234,179,8,0.2);
+  color: #facc15;
+}
+
+.action-status.interview_completed {
+  background: rgba(16,185,129,0.2);
+  color: #34d399;
+}
+
+.action-status.offered {
+  background: rgba(34,197,94,0.2);
+  color: #4ade80;
+}
+
+.action-status.rejected {
+  background: rgba(239,68,68,0.2);
+  color: #f87171;
+}
+
+/* Footer */
+.action-footer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ============================= */
+/* PROFILE PAGE – DARK INSPIRED */
+/* ============================= */
+
+.profile-wrapper {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.section-title {
+  font-size: 18px;
+  margin-bottom: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-row .label {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.info-row .value {
+  font-size: 15px;
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.profile-left,
+.profile-right {
+  padding: 26px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #0e1a2f, #0b1424);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.status-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+}
+
+.job-modern-salary {
+  font-size: 13px;
+  color: #9bb8ff;
+  margin-top: 4px;
+}

@@ -12,8 +12,8 @@
      <aside class="sidebar">
       <h2 class="brand">BeyondMatch</h2>
       <nav class="menu">
-    <a href="candidate-dashboard.html" class="menu-item">Dashboard</a>
-    <a href="upload-jd.html" class="menu-item">Job Descriptions</a>
+    <a href="candidate-dashboard.html" class="menu-item ">Dashboard</a>
+    <a href="jobmatches.html" class="menu-item active">Job Matches</a>
     <a href="savedjobs.html" class="menu-item">Saved Jobs</a>
     <a href="locatehire.html" class="menu-item">LocateHire</a>
     <a href="settings.html" class="menu-item">Settings</a>
@@ -22,7 +22,6 @@
   ⏻ Logout
 </button>
     </aside>
-
 
 <!-- MAIN -->
 <div class="main">
@@ -44,11 +43,36 @@
   </div>
 
   <!-- RESULTS -->
-  <div class="card large" style="margin-top:5px;">
-    <h3>Matched Jobs</h3>
-   <div id="matchesGrid" class="matches-grid"></div>
+<!-- RESULTS -->
+<div class="card large matches-wrapper">
 
+  <div class="matches-header">
+    <h3>Matched Jobs</h3>
+
+    <div class="match-filters">
+      <select id="locationFilter" class="dropdown small">
+        <option value="">All Locations</option>
+      </select>
+
+      <select id="matchFilter" class="dropdown small">
+        <option value="">All Match %</option>
+        <option value="50">50%+</option>
+        <option value="60">60%+</option>
+        <option value="70">70%+</option>
+        <option value="80">80%+</option>
+      </select>
+
+      <select id="salarySort" class="dropdown small">
+        <option value="">Salary</option>
+        <option value="high">High → Low</option>
+        <option value="low">Low → High</option>
+      </select>
+    </div>
   </div>
+
+  <div id="matchesGrid" class="matches-grid"></div>
+
+</div>
 
 </div>
 <script type="module" src="auth.js"></script>

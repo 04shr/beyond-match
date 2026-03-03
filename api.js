@@ -1,24 +1,55 @@
-/* =========================================================
-   BACKEND API CONFIG
-========================================================= */
+import { analytics, auth, db } from "./auth.js";
+
+import { logEvent } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import {
+  collection,
+  getDocs,
+  addDoc,
+  query,
+  where,
+  doc,
+  getDoc,
+  updateDoc,      // ✅ FIX ADDED
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+
 const API_BASE = "https://2bcj60lax1.execute-api.eu-north-1.amazonaws.com/prod";
 
 export { apiFetch };
 
+
+let selectedJobIdForCandidates = null;
 function normalizeApiResponse(res) {
+  if (!res) return [];
+
+  // If backend returned array directly
   if (Array.isArray(res)) return res;
-  if (res?.body && typeof res.body === "string") {
+
+  // If backend wrapped data inside body string
+  if (res.body && typeof res.body === "string") {
     try {
-      return JSON.parse(res.body);
+      const parsed = JSON.parse(res.body);
+
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed.matches) return parsed.matches;
+
+      return [];
     } catch {
       return [];
     }
   }
+
+  // If backend returned object with matches key
+  if (res.matches) return res.matches;
+
   return [];
 }
-
-
-
 /* =========================================================
    GENERIC API FETCH
 ========================================================= */
@@ -129,6 +160,13 @@ async function loadMatches() {
     return;
   }
 
+  if (data.matches && data.matches.length > 0) {
+  logEvent(analytics, "match_generated", {
+    job_id: selectedJobId,
+    match_count: data.matches.length
+  });
+}
+
   data.matches.forEach(match => {
     const name = match.name || "Candidate Name Not Available";
     const email = match.email || "Email not available";
@@ -150,8 +188,17 @@ async function loadMatches() {
   });
 }
 
+let cachedJobs = null;
+
+async function getStableJobs() {
+  if (!cachedJobs) {
+    cachedJobs = await fetchJobs();
+  }
+  return cachedJobs;
+}
+
 async function loadDashboardKPIs() {
-  const jobs = await fetchJobs();
+  const jobs = await getStableJobs();
   let totalMatches = 0;
   let totalScore = 0;
   let count = 0;
@@ -221,5 +268,670 @@ function setupCustomDropdown() {
   });
 }
 
+/* =========================================================
+   RECRUITER JOBS PAGE LOGIC (rec-jobs.html)
+========================================================= */
+
+let recruiterOrg = null;
+let allJobs = [];
+let showAll = false;
+
+async function initRecruiterJobsPage() {
+
+  const titleEl = document.getElementById("jobsPageTitle");
+  const tableEl = document.getElementById("jobsTable");
+
+  if (!titleEl || !tableEl) return; // Not this page
+  onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    titleEl.textContent = "Not authenticated";
+    return;
+  }
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+
+  if (!snap.exists()) {
+    titleEl.textContent = "Recruiter record not found";
+    return;
+  }
+
+  recruiterOrg = snap.data().organisation_name;
+
+  if (!recruiterOrg) {
+    titleEl.textContent = "No organisation linked";
+    return;
+  }
+
+  titleEl.textContent = recruiterOrg + " Jobs";
+
+  await loadRecruiterJobs();
+});
 
 
+
+document.getElementById("myOrgBtn")?.addEventListener("click", () => {
+  showAll = false;
+  document.getElementById("myOrgBtn").classList.add("active");
+  document.getElementById("allJobsBtn").classList.remove("active");
+  renderRecruiterJobs();
+});
+
+document.getElementById("allJobsBtn")?.addEventListener("click", () => {
+  showAll = true;
+  document.getElementById("allJobsBtn").classList.add("active");
+  document.getElementById("myOrgBtn").classList.remove("active");
+  renderRecruiterJobs();
+});
+document.getElementById("locationFilter")
+  ?.addEventListener("change", renderRecruiterJobs);
+  document.getElementById("searchInput")
+    ?.addEventListener("input", renderRecruiterJobs);
+
+  document.getElementById("sortSelect")
+    ?.addEventListener("change", renderRecruiterJobs);
+}
+
+async function loadRecruiterJobs() {
+const jobs = await getStableJobs();
+
+const orgJobs = jobs.filter(j =>
+  j.company &&
+  recruiterOrg &&
+  j.company.toLowerCase().includes(
+  recruiterOrg.toLowerCase().trim()
+)
+);
+  allJobs = jobs;
+  renderRecruiterJobs();
+  populateLocationFilter();
+}
+
+function formatSalary(job) {
+  const min = job.salary_min;
+  const max = job.salary_max;
+
+  if (!min && !max) return "Salary not disclosed";
+
+  if (min && max) {
+    if (min === max) return `$${Math.round(min).toLocaleString()}`;
+    return `$${Math.round(min).toLocaleString()} - $${Math.round(max).toLocaleString()}`;
+  }
+
+  if (min) return `From $${Math.round(min).toLocaleString()}`;
+  if (max) return `Up to $${Math.round(max).toLocaleString()}`;
+
+  return "Salary not disclosed";
+}
+
+function renderRecruiterJobs() {
+
+  const tableEl = document.getElementById("jobsTable");
+  if (!tableEl) return;
+
+let filtered = showAll
+  ? allJobs
+  : allJobs.filter(j =>
+      j.company &&
+      recruiterOrg &&
+      j.company.toLowerCase() === recruiterOrg.toLowerCase()
+    );
+
+/* SEARCH */
+const searchTerm =
+  document.getElementById("searchInput")?.value.toLowerCase() || "";
+
+if (searchTerm) {
+  filtered = filtered.filter(j =>
+    j.title?.toLowerCase().includes(searchTerm)
+  );
+}
+
+/* LOCATION */
+const location =
+  document.getElementById("locationFilter")?.value?.toLowerCase().trim();
+
+if (location) {
+  filtered = filtered.filter(j =>
+    (getJobLocation(j) || "")
+      .toLowerCase()
+      .trim()
+      .includes(location)
+  );
+}
+/* SORT */
+const sortValue = document.getElementById("sortSelect")?.value;
+
+if (sortValue === "title") {
+  filtered.sort((a, b) => a.title.localeCompare(b.title));
+}
+  if (!filtered.length) {
+    tableEl.innerHTML = "<p>No jobs found.</p>";
+    return;
+  }
+
+  tableEl.innerHTML = filtered.map(job => `
+  <div class="job-modern-card">
+    <div class="job-modern-header">
+      <h3>${job.title}</h3>
+      <span class="job-pill">
+${
+  job.location_display ||
+  job.location ||
+  (job.city && job.country
+    ? `${job.city}, ${job.country}`
+    : job.country || "-")
+}
+</span>
+    </div>
+
+    <div class="job-modern-company">
+      ${job.company || "-"}
+    </div>
+
+    <div class="job-modern-salary">
+  ${formatSalary(job)}
+</div>
+
+    <div class="job-modern-actions">
+      <button class="modern-view-btn"
+        data-url="${job.apply_link || job.apply_url || ''}">
+        View
+      </button>
+    </div>
+  </div>
+`).join("");
+
+tableEl.querySelectorAll("button[data-url]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const url = btn.getAttribute("data-url");
+
+    if (!url) {
+      alert("No job link available");
+      return;
+    }
+
+    window.open(url, "_blank", "noopener,noreferrer");
+  });
+});
+}
+
+function getJobLocation(job) {
+  return (
+    job.location_display ||
+    job.location ||
+    (job.city && job.country
+      ? `${job.city}, ${job.country}`
+      : job.country || null)
+  );
+}
+
+function populateLocationFilter() {
+  const select = document.getElementById("locationFilter");
+  if (!select) return;
+
+  const locations = [
+    ...new Set(
+      allJobs
+        .map(getJobLocation)
+        .filter(Boolean)
+    )
+  ];
+
+  select.innerHTML = `
+    <option value="">All Locations</option>
+    ${locations.map(loc =>
+      `<option value="${loc}">${loc}</option>`
+    ).join("")}
+  `;
+}
+
+document.addEventListener("DOMContentLoaded", initRecruiterJobsPage);
+
+/* =========================================================
+   CANDIDATE MATCHES PAGE (AUTO ORG + AUTO ROLE SELECT)
+========================================================= */
+
+let allCandidates = [];
+let recruiterOrgRoleList = [];
+
+async function initCandidateMatchesPage() {
+
+  const container = document.getElementById("candMatchesTable");
+  const roleDropdown = document.getElementById("roleDropdown");
+  
+
+  if (!container || !roleDropdown) return;
+
+  onAuthStateChanged(auth, async (user) => {
+
+    if (!user) {
+      container.innerHTML = "User not authenticated.";
+      return;
+    }
+
+    const snap = await getDoc(doc(db, "users", user.uid));
+
+    if (!snap.exists()) {
+      container.innerHTML = "User record not found.";
+      return;
+    }
+
+    recruiterOrg = snap.data().organisation_name;
+
+    if (!recruiterOrg) {
+      container.innerHTML = "No organisation linked to this recruiter.";
+      return;
+    }
+
+    const jobs = await getStableJobs();
+
+    const orgJobs = jobs.filter(j =>
+    j.company &&
+j.company.toLowerCase().includes(
+  recruiterOrg.toLowerCase().trim()
+)
+    );
+
+    recruiterOrgRoleList = [
+      ...new Set(orgJobs.map(j => j.title).filter(Boolean))
+    ];
+
+    if (!recruiterOrgRoleList.length) {
+      container.innerHTML = "No jobs found for your organisation.";
+      return;
+    }
+
+    roleDropdown.innerHTML = recruiterOrgRoleList
+      .map(role => `<option value="${role}">${role}</option>`)
+      .join("");
+
+
+    const defaultRole = recruiterOrgRoleList[0];
+    roleDropdown.value = defaultRole;
+
+
+    await loadCandidatesForRole(defaultRole);
+
+    roleDropdown.addEventListener("change", async () => {
+   
+      await loadCandidatesForRole(roleDropdown.value);
+    });
+
+    
+// 🔥 SEARCH LISTENER
+document
+  .getElementById("candSearchInput")
+  ?.addEventListener("input", renderCandidateMatches);
+
+// 🔥 SORT LISTENER
+document
+  .getElementById("candSortSelect")
+  ?.addEventListener("change", renderCandidateMatches);
+  });
+
+}
+
+async function loadCandidatesForRole(role) {
+
+  const container = document.getElementById("candMatchesTable");
+  container.innerHTML = "Loading candidates...";
+
+  const jobs = await getStableJobs();
+
+ const selectedJob = jobs.find(j =>
+  j.title?.toLowerCase().trim() === role.toLowerCase().trim() &&
+  j.company?.toLowerCase().includes(
+    recruiterOrg.toLowerCase().trim()
+  )
+);
+
+
+  if (!selectedJob) {
+    container.innerHTML = "No job found for this role.";
+    return;
+  }
+selectedJobIdForCandidates = selectedJob.job_id;
+  const res = await apiFetch(
+    `/matches?job_id=${selectedJob.job_id}&top_n=50&offset=0`
+  );
+const data = normalizeApiResponse(res);
+
+if (!data.length) {
+  container.innerHTML = "No matching candidates found.";
+  return;
+}
+
+// 🔥 Enrich candidates with Firestore data
+const enriched = [];
+
+for (const match of data) {
+  const snap = await getDoc(doc(db, "candidates", match.candidate_id));
+  const candidateData = snap.exists() ? snap.data() : {};
+
+  enriched.push({
+    ...match,
+    name: candidateData.name || "",
+    email: candidateData.email || ""
+  });
+}
+
+allCandidates = enriched;
+renderCandidateMatches();
+}
+
+async function renderCandidateMatches() {
+
+  const container = document.getElementById("candMatchesTable");
+  if (!container) return;
+
+  let filtered = [...allCandidates];
+
+
+
+  const search =
+    document.getElementById("candSearchInput")?.value.toLowerCase() || "";
+
+  if (search) {
+    filtered = filtered.filter(c =>
+      c.name?.toLowerCase().includes(search) ||
+      c.email?.toLowerCase().includes(search)
+    );
+  }
+
+  // 🔥 SORTING
+const sortValue =
+  document.getElementById("candSortSelect")?.value;
+
+if (sortValue === "name") {
+  filtered.sort((a, b) =>
+    (a.name || "").localeCompare(b.name || "")
+  );
+}
+
+if (sortValue === "newest") {
+  filtered.sort((a, b) =>
+    new Date(b.created_at || 0) - new Date(a.created_at || 0)
+  );
+}
+
+if (sortValue === "oldest") {
+  filtered.sort((a, b) =>
+    new Date(a.created_at || 0) - new Date(b.created_at || 0)
+  );
+}
+
+  if (!filtered.length) {
+    container.innerHTML = "No matching candidates found.";
+    return;
+  }
+
+  container.innerHTML = "Loading candidates...";
+
+  const cards = await Promise.all(
+    filtered.map(async (match) => {
+
+  const percent =
+    match.match_percent != null
+      ? match.match_percent.toFixed(1)
+      : "0";
+
+ const skills =
+  match.explanation?.skill_overlap ||
+  match.explanation?.top_skills ||
+  match.skills ||
+  (
+    match.explanation?.top_reason
+      ? match.explanation.top_reason
+          .replace("Strong match in:", "")
+          .split(",")
+          .map(s => s.trim())
+      : []
+  );
+
+  return `
+    <div class="cand-card">
+
+      <div class="cand-title">
+        ${match.name || "Candidate"}
+      </div>
+
+      <div class="cand-email">
+        ${match.email || "-"}
+      </div>
+
+      <div class="cand-skills">
+        ${
+          skills.length
+            ? skills.slice(0,3).map(s =>
+                `<span class="skill-pill">${s}</span>`
+              ).join("")
+            : `<span class="skill-pill subtle">No skills available</span>`
+        }
+      </div>
+
+      <div class="cand-score">
+        <span class="match-pill">
+          ${percent}% Match
+        </span>
+      </div>
+
+      <div class="cand-confidence">
+        ${match.confidence || "N/A"}
+      </div>
+
+      <div class="cand-actions">
+        <a href="rec-actions.html?id=${match.candidate_id}&job=${selectedJobIdForCandidates}"
+           class="view-btn">
+           View
+        </a>
+      </div>
+
+    </div>
+  `;
+})
+  );
+
+  container.innerHTML = cards.join("");
+}
+
+document.addEventListener("DOMContentLoaded", initCandidateMatchesPage);
+
+/* =========================================================
+   RECRUITER ACTIONS PAGE LOGIC
+========================================================= */
+
+async function initRecruiterActionsPage() {
+
+  const container = document.getElementById("actionsContainer");
+  if (!container) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const candidateId = urlParams.get("id");
+  const jobId = urlParams.get("job");
+
+  if (!candidateId) {
+    loadContactedProfiles();
+    return;
+  }
+
+  const snap = await getDoc(doc(db, "candidates", candidateId));
+  const candidate = snap.exists() ? snap.data() : {};
+
+container.innerHTML = `
+  <div class="profile-wrapper">
+
+    <div class="profile-left card">
+
+      <h2 class="section-title">Candidate Overview</h2>
+
+      <div class="profile-info">
+        <div class="info-row">
+          <span class="label">Name</span>
+          <span class="value">${candidate.name || "-"}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Email</span>
+          <span class="value">${candidate.email || "-"}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Phone</span>
+          <span class="value">${candidate.phone || "-"}</span>
+        </div>
+      </div>
+
+      ${candidate.resume_url ? `
+        <button id="viewResumeBtn" class="btn">
+          View Resume
+        </button>
+      ` : ``}
+
+    </div>
+
+    <div class="profile-right card">
+
+      <h2 class="section-title">Recruitment Status</h2>
+
+      <label class="label">Status</label>
+      <select id="statusSelect" class="input">
+        <option value="contacted">Contacted</option>
+        <option value="interview_scheduled">Interview Scheduled</option>
+        <option value="interview_completed">Interview Completed</option>
+        <option value="offered">Offered</option>
+        <option value="rejected">Rejected</option>
+      </select>
+
+      <label class="label">Notes</label>
+      <textarea id="notesInput" class="input" placeholder="Add notes..."></textarea>
+
+      <div class="status-actions">
+        <button id="saveActionBtn" class="btn">Save Action</button>
+        <button id="sendEmailBtn" class="btn">Send Email</button>
+      </div>
+
+    </div>
+
+  </div>
+`;
+
+  // 🔥 Load existing status
+const q = query(
+  collection(db, "recruiter_actions"),
+  where("candidate_id", "==", candidateId),
+  where("job_id", "==", jobId)
+);
+
+const snapActions = await getDocs(q);
+
+if (!snapActions.empty) {
+  const data = snapActions.docs[0].data();
+
+  document.getElementById("statusSelect").value = data.status || "contacted";
+  document.getElementById("notesInput").value = data.notes || "";
+}
+ document.getElementById("saveActionBtn").onclick = async () => {
+
+  const status = document.getElementById("statusSelect").value;
+  const notes = document.getElementById("notesInput").value;
+
+  const q = query(
+    collection(db, "recruiter_actions"),
+    where("candidate_id", "==", candidateId),
+    where("job_id", "==", jobId)
+  );
+
+  const existing = await getDocs(q);
+
+  if (!existing.empty) {
+    const docRef = existing.docs[0].ref;
+
+    await updateDoc(docRef, {
+      status,
+      notes,
+      updated_at: serverTimestamp()
+    });
+
+  } else {
+
+    await addDoc(collection(db, "recruiter_actions"), {
+      candidate_id: candidateId,
+      job_id: jobId,
+      status,
+      notes,
+      created_at: serverTimestamp()
+    });
+
+  }
+
+  alert("Saved successfully ✅");
+};
+
+  document.getElementById("sendEmailBtn").onclick = () => {
+    if (!candidate.email) {
+      alert("No email available.");
+      return;
+    }
+
+    const subject = encodeURIComponent("Regarding Your Application");
+    const body = encodeURIComponent("Hi " + (candidate.name || "") + ",\n\nWe would like to proceed further.");
+
+    window.location.href = `mailto:${candidate.email}?subject=${subject}&body=${body}`;
+  };
+}
+
+async function loadContactedProfiles() {
+
+  const container = document.getElementById("actionsContainer");
+  container.innerHTML = "Loading...";
+
+  const q = query(collection(db, "recruiter_actions"));
+  const snap = await getDocs(q);
+
+  if (snap.empty) {
+    container.innerHTML = "No contacted candidates yet.";
+    return;
+  }
+
+  const cards = [];
+
+  for (const docSnap of snap.docs) {
+    const data = docSnap.data();
+
+    const candSnap = await getDoc(doc(db, "candidates", data.candidate_id));
+    const candidate = candSnap.exists() ? candSnap.data() : {};
+
+    function formatStatus(status = "") {
+  return status
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, l => l.toUpperCase());
+}
+
+cards.push(`
+  <div class="cand-card action-card">
+
+    <div class="action-header">
+      <div class="action-name">
+        ${candidate.name || "Candidate"}
+      </div>
+
+      <span class="action-status ${data.status}">
+        ${formatStatus(data.status)}
+      </span>
+    </div>
+
+    <div class="action-footer">
+      <a href="rec-actions.html?id=${data.candidate_id}&job=${data.job_id}" 
+         class="view-btn">
+         View
+      </a>
+    </div>
+
+  </div>
+`);
+  }
+
+  container.innerHTML = cards.join("");
+}
+
+document.addEventListener("DOMContentLoaded", initRecruiterActionsPage);

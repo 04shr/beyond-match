@@ -780,7 +780,8 @@ select, input, textarea {
    APPLY / VIEW JOB BUTTON
 ================================ */
 
-.apply-btn {
+.apply-btn,
+.save-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -812,7 +813,8 @@ select, input, textarea {
 }
 
 /* Hover glow + lift */
-.apply-btn:hover {
+.apply-btn:hover,
+.save-btn:hover {
   color: #ffffff;
   border-color: rgba(167, 139, 250, 0.8);
 
@@ -824,7 +826,8 @@ select, input, textarea {
 }
 
 /* Subtle shine animation */
-.apply-btn::before {
+.apply-btn::before,
+.save-btn::before {
   content: "";
   position: absolute;
   top: 0;
@@ -842,7 +845,8 @@ select, input, textarea {
   transition: left 0.6s ease;
 }
 
-.apply-btn:hover::before {
+.apply-btn:hover::before,
+.save-btn:hover::before {
   left: 100%;
 }
 
@@ -937,4 +941,65 @@ select, input, textarea {
 .no-matches h4 {
   color: #ffffff;
   margin-bottom: 6px;
+}
+
+/* ===============================
+   MATCHES HEADER + FILTERS
+================================ */
+
+.matches-wrapper {
+  padding: 20px 24px;
+}
+
+.matches-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.match-filters {
+  display: flex;
+  gap: 12px;
+}
+
+.dropdown.small {
+  width: 150px;
+}
+
+/* ===============================
+   MODERN MATCH CARD
+================================ */
+
+.modern-match-card {
+  background: linear-gradient(145deg, #1b2033, #161a2b);
+  border-radius: 16px;
+  padding: 18px;
+  transition: all 0.25s ease;
+}
+
+.modern-match-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+}
+
+.match-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.match-badge {
+  background: #4f7cff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+}
+
+.salary {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-top: 4px;
 }

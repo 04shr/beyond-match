@@ -1,5 +1,6 @@
 /* =========================================================
-   FIREBASE SETUP (UNCHANGED)
+   FIREBASE IMPORTS
+   Initializes Firebase services used in the app
 ========================================================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
@@ -9,7 +10,8 @@ import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
+import { getAnalytics, logEvent } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 import {
   getFirestore,
   serverTimestamp,
@@ -20,7 +22,8 @@ import {
 
 
 /* =========================================================
-   FIREBASE CONFIG (UNCHANGED)
+   FIREBASE CONFIGURATION
+   Project credentials for Firebase initialization
 ========================================================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCbrwCaaQYEFCF1FJto_O3OYi68qTOqGQc",
@@ -28,52 +31,54 @@ const firebaseConfig = {
   projectId: "beyondmatch-a714f",
   storageBucket: "beyondmatch-a714f.firebasestorage.app",
   messagingSenderId: "16758090560",
-  appId: "1:16758090560:web:89f207139970c97592a8a5"
+  appId: "1:16758090560:web:89f207139970c97592a8a5",
+  measurementId: "G-VZN3JKW8DX"
 };
 
+/* Initialize Firebase services */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const analytics = getAnalytics(app);
+
 
 /* =========================================================
-   🔒 SINGLE AUTH STATE LISTENER (FIX)
+   GLOBAL AUTH STATE LISTENER
+   Handles login redirects and role-based access control
 ========================================================= */
 onAuthStateChanged(auth, async (user) => {
-  const page = window.location.pathname.split("/").pop();
 
+  const path = window.location.pathname;
+
+  // If not logged in → only protect non-index pages
   if (!user) {
-    if (page !== "index.html") {
-      window.location.replace("index.html");
+    if (!path.endsWith("index.html") && path !== "/") {
+      window.location.href = "/index.html";
     }
     return;
   }
 
-  const snap = await getDoc(doc(db, "users", user.uid));
-  const role = snap.exists() ? snap.data().role : "candidate";
+  // If logged in AND on index → redirect to dashboard
+  if (path.endsWith("index.html") || path === "/") {
 
-  if (page === "index.html") {
-    const routes = {
-      admin: "admin.html",
-      recruiter: "rec-dash.html",
-      candidate: "candidate-dashboard.html"
-    };
-    window.location.replace(routes[role] || "candidate-dashboard.html");
-    return;
-  }
+    const snap = await getDoc(doc(db, "users", user.uid));
+    const role = snap.exists() ? snap.data().role : "candidate";
 
-const allowed = {
-  admin: ["admin.html", "settings.html"],
-  recruiter: ["rec-dash.html", "upload-jd.html", "settings.html"],
-  candidate: ["candidate-dashboard.html", "jobmatches.html", "savedjobs.html", "locatehire.html", "settings.html", "upload-jd.html"]
-};
-
-
-  if (!allowed[role]?.includes(page)) {
-    window.location.replace("index.html");
+    if (role === "recruiter") {
+      window.location.href = "/rec-dash.html";
+    } else if (role === "admin") {
+      window.location.href = "/admin.html";
+    } else {
+      window.location.href = "/candidate-dashboard.html";
+    }
   }
 
 });
 
+/* =========================================================
+   LOGOUT FUNCTION
+   Signs user out and redirects to landing page
+========================================================= */
 window.unifiedLogout = async function () {
   try {
     await signOut(auth);
@@ -85,15 +90,17 @@ window.unifiedLogout = async function () {
 };
 
 
-
 /* =========================================================
-   AUTH STATE
+   AUTH STATE VARIABLES
+   Tracks login/signup mode
 ========================================================= */
-let authMode = "login"; // login | signup
+let authMode = "login";
 let justSignedUp = false;
 
+
 /* =========================================================
-   AUTH UI CONTROL
+   AUTH MODAL UI CONTROL
+   Open, close and toggle authentication modal
 ========================================================= */
 function openAuth(mode) {
   authMode = mode;
@@ -114,34 +121,45 @@ function toggleAuth() {
   clearAuthMessage();
 }
 
+
+/* =========================================================
+   UPDATE AUTH UI
+   Updates text, buttons and fields based on auth mode
+========================================================= */
 function updateAuthUI() {
   const title = document.getElementById("authTitle");
   const text = document.getElementById("authText");
   const link = document.getElementById("authToggleLink");
   const btn = document.querySelector(".auth-btn");
   const roleSelect = document.getElementById("roleSelect");
+  const orgInput = document.getElementById("orgNameInput");
 
+  if (authMode === "login") {
+    title.innerText = "Login";
+    text.innerText = "Don’t have an account?";
+    link.innerText = "Sign Up";
+    btn.innerText = "Login";
 
- if (authMode === "login") {
-  title.innerText = "Login";
-  text.innerText = "Don’t have an account?";
-  link.innerText = "Sign Up";
-  btn.innerText = "Login";
+    if (roleSelect) roleSelect.style.display = "none";
+  } else {
+    title.innerText = "Sign Up";
+    text.innerText = "Already have an account?";
+    link.innerText = "Login";
+    btn.innerText = "Create Account";
 
-  if (roleSelect) roleSelect.style.display = "none";
+    if (roleSelect) roleSelect.style.display = "block";
 
-} else {
-  title.innerText = "Sign Up";
-  text.innerText = "Already have an account?";
-  link.innerText = "Login";
-  btn.innerText = "Create Account";
-
-  if (roleSelect) roleSelect.style.display = "block";
+    if (orgInput) {
+      orgInput.style.display = "none";
+      orgInput.value = "";
+    }
+  }
 }
-}
+
 
 /* =========================================================
-   AUTH MESSAGE
+   AUTH MESSAGE HELPERS
+   Show and clear auth status messages
 ========================================================= */
 function showMessage(text, type = "error") {
   const msg = document.getElementById("authMessage");
@@ -157,8 +175,10 @@ function clearAuthMessage() {
   msg.style.display = "none";
 }
 
+
 /* =========================================================
-   AUTH SUBMIT HANDLER
+   AUTH FORM SUBMIT HANDLER
+   Handles signup and login logic
 ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
   const emailInput = document.querySelector('.auth-card input[type="email"]');
@@ -174,10 +194,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = passwordInput.value;
 
     const role =
-  authMode === "signup"
-    ? document.getElementById("roleSelect")?.value
-    : null;
-
+      authMode === "signup"
+        ? document.getElementById("roleSelect")?.value
+        : null;
 
     if (!email || !password) {
       showMessage("Please enter email and password.");
@@ -192,27 +211,33 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.disabled = true;
 
     if (authMode === "signup" && !role) {
-  showMessage("Please select a role.");
-  return;
-}
+      showMessage("Please select a role.");
+      return;
+    }
 
+    const orgName = document.getElementById("orgNameInput")?.value.trim();
+
+    if (authMode === "signup" && role === "recruiter" && !orgName) {
+      showMessage("Please enter organisation name.");
+      btn.disabled = false;
+      return;
+    }
 
     try {
-      /* ================= SIGN UP ================= */
+
+      /* Signup flow */
       if (authMode === "signup") {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-       await setDoc(doc(db, "users", cred.user.uid), {
-  email,
-  role,                  // 🔥 NEW
-  createdAt: serverTimestamp()
-});
-
-
+        await setDoc(doc(db, "users", cred.user.uid), {
+          email,
+          role,
+          organisation_name: role === "recruiter" ? orgName : null,
+          createdAt: serverTimestamp()
+        });
 
         showMessage("Account created successfully 🎉 Please login.", "success");
 
-        // 🔑 CRITICAL FIXES
         justSignedUp = true;
         authMode = "login";
         updateAuthUI();
@@ -221,11 +246,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      /* ================= LOGIN ================= */
- await signInWithEmailAndPassword(auth, email, password);
-showMessage("Login successful. Redirecting…", "success");
-
-
+      /* Login flow */
+      await signInWithEmailAndPassword(auth, email, password);
+      showMessage("Login successful. Redirecting…", "success");
 
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
@@ -245,9 +268,32 @@ showMessage("Login successful. Redirecting…", "success");
   };
 });
 
+
+/* =========================================================
+   ROLE SELECT HANDLER
+   Shows organisation field for recruiter signup
+========================================================= */
+document.getElementById("roleSelect")?.addEventListener("change", (e) => {
+  const orgInput = document.getElementById("orgNameInput");
+
+  if (e.target.value === "recruiter") {
+    orgInput.style.display = "block";
+  } else {
+    orgInput.style.display = "none";
+    orgInput.value = "";
+  }
+});
+
+
+/* =========================================================
+   GLOBAL EXPORTS
+   Exposes Firebase and auth UI functions globally
+========================================================= */
 window.auth = auth;
 window.db = db;
-// 🔓 Expose auth UI functions globally (for inline HTML handlers)
+
 window.openAuth = openAuth;
 window.closeAuth = closeAuth;
 window.toggleAuth = toggleAuth;
+
+export { analytics, auth, db };
