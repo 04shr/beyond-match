@@ -341,7 +341,7 @@ const orgJobs = jobs.filter(j =>
   recruiterOrg.toLowerCase().trim()
 )
 );
-  allJobs = jobs;
+allJobs = orgJobs;
   renderRecruiterJobs();
   populateLocationFilter();
 }
@@ -373,7 +373,9 @@ let filtered = showAll
   : allJobs.filter(j =>
       j.company &&
       recruiterOrg &&
-      j.company.toLowerCase() === recruiterOrg.toLowerCase()
+    j.company.toLowerCase().includes(
+  recruiterOrg.toLowerCase().trim()
+)
     );
 
 /* SEARCH */
